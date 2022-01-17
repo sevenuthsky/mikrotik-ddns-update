@@ -1,0 +1,13 @@
+:local interfacename "yourinterfacename";
+:local ddns "example.ChangeIP.com";
+:local login "yourlogin";
+:local password "yourpassword";
+:local url "https://nic.ChangeIP.com/nic/update";
+
+:local CurrentDynDNSIP [/resolve $ddns];
+:local TMPDynDNSIP [/ip address get [/ip address find interface=$interfacename] address];
+:local RealDynDNSIP [:pick $TMPDynDNSIP 0 ([:len $TMPDynDNSIP]-3)];
+:if ($CurrentDynDNSIP!=$RealDynDNSIP) do={
+/tool fetch url=($url . "?ip=$RealDynDNSIP&hostname=$ddns") mode=https user=$login password=$password http-method=post output=none;
+/log info "Host $ddns updated on changeip.com with IP $RealDynDNSIP";
+}
